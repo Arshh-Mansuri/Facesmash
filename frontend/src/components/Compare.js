@@ -9,7 +9,7 @@ const Compare = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5097/api/compare/males"); // <-- FIXED
+      const res = await axios.get("http://localhost:5097/api/Compare/males"); // <-- FIXED
       setUsers(res.data);
       setLoading(false);
     } catch (err) {

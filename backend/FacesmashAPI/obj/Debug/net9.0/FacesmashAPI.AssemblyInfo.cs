@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8faccacf6e5af26000b9ff838a6739270b3362e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+152b574cfd0465b1d59895eb39f220bda7e884f6")]
 [assembly: System.Reflection.AssemblyProductAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

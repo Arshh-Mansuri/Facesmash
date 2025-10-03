@@ -44,16 +44,25 @@ namespace FacesmashAPI.Controllers
         [HttpGet("males")]
         public async Task<IActionResult> GetRandomMales()
         {
-            var males = await _db.Users
+            // Fetch all male users into memory, then pick 2 randomly
+            var males = (await _db.Users
                 .Where(u => u.Gender == "M")
-                .OrderBy(r => Guid.NewGuid()) // randomize
-                .Take(2) // pick 2
-                .ToListAsync();
+                .ToListAsync())
+                .OrderBy(u => Guid.NewGuid())
+                .Take(2)
+                .ToList();
 
             if (males.Count < 2)
                 return BadRequest("Not enough male users");
 
-            return Ok(males.Select(u => new { u.Id, u.Name, u.PhotoUrl, u.Rating }));
+            return Ok(males.Select(u => new
+            {
+                u.Id,
+                u.Name,
+                u.PhotoUrl,
+                u.Rating,
+                u.Bio // Include the bio field
+            }));
         }
     }
 

@@ -2,9 +2,9 @@ import React from "react";
 
 function Dashboard() {
   return (
-    <div className="container mt-5 text-center">
+    <div className="container text-center mt-5">
       <h1>Dating on Campus Reimagined</h1>
-      <p>Welcome to Facesmash!</p>
+      <p className="text-muted">Welcome to Facesmash 🚀</p>
     </div>
   );
 }

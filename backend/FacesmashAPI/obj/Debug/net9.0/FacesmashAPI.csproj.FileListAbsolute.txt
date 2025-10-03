@@ -192,3 +192,4 @@
 /Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/obj/Debug/net9.0/FacesmashAPI.pdb
 /Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/obj/Debug/net9.0/FacesmashAPI.genruntimeconfig.cache
 /Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/obj/Debug/net9.0/ref/FacesmashAPI.dll
+/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/obj/Debug/net9.0/FacesmashAPI.sourcelink.json

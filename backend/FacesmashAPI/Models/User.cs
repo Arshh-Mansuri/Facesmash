@@ -9,8 +9,11 @@ namespace FacesmashAPI.Models
         public string Gender { get; set; }
 
         // Make PhotoUrl nullable
-        public string? PhotoUrl { get; set; }  
-        
+        public string? PhotoUrl { get; set; }
+        // New bio field
+        public string? Bio { get; set; }
+
         public int Rating { get; set; } = 0;
+
     }
 }

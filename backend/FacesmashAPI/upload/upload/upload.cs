@@ -23,7 +23,7 @@ namespace upload
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded");
 
-            // 1️⃣ Upload to Azure Blob
+            // Upload to Azure Blob
             var blobServiceClient = new BlobServiceClient(blobConnection);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
@@ -36,7 +36,31 @@ namespace upload
 
             string blobUrl = blobClient.Uri.ToString();
 
-            // 2️⃣ Store metadata in SQLite
+            using (var connection = new SqliteConnection("Data Source=uploads.db"))
+            {
+                connection.Open();
+            
+                var command = connection.CreateCommand();
+                command.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS Photos (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        FileName TEXT,
+                        Url TEXT,
+                        UploadDate TEXT
+                    );";
+                command.ExecuteNonQuery();
+            
+                var insert = connection.CreateCommand();
+                insert.CommandText = @"
+                    INSERT INTO Photos (FileName, Url, UploadDate)
+                    VALUES ($file, $url, $date);";
+                insert.Parameters.AddWithValue("$file", "example.jpg");
+                insert.Parameters.AddWithValue("$url", "https://example.com/example.jpg");
+                insert.Parameters.AddWithValue("$date", DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
+                insert.ExecuteNonQuery();
+            }
+
+            //  Store metadata in SQLite
             using (var connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
@@ -63,3 +87,4 @@ namespace upload
     }
 
 }
+

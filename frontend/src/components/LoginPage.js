@@ -16,6 +16,12 @@ function LoginPage() {
         password,
       });
       setMessage(`Welcome ${res.data.name}!`);
+      // Save minimal session info
+      try {
+        localStorage.setItem("userId", String(res.data.userId));
+        localStorage.setItem("name", res.data.name || "");
+        localStorage.setItem("email", res.data.email || "");
+      } catch {}
 
       // ✅ Redirect to dashboard
       navigate("/dashboard");

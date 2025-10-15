@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Profile = () => {
@@ -6,10 +7,14 @@ const Profile = () => {
   const [bio, setBio] = useState("");
   const [file, setFile] = useState(null);
 
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
+
   // Fetch user data
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5097/api/profile/1"); // Example: User ID 1
+      if (!userId) return;
+      const res = await axios.get(`http://localhost:5097/api/profile/${userId}`);
       setUser(res.data);
       setBio(res.data.bio || "");
     } catch (err) {
@@ -20,7 +25,8 @@ const Profile = () => {
   // Update bio
   const handleSave = async () => {
     try {
-      await axios.put("http://localhost:5097/api/profile/1", { bio });
+      if (!userId) return;
+      await axios.put(`http://localhost:5097/api/profile/me?userId=${userId}`, { bio });
       alert("Profile updated!");
       fetchProfile();
     } catch (err) {
@@ -33,7 +39,7 @@ const Profile = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
-    await axios.post("http://localhost:5097/api/upload", formData, {
+    await axios.post(`http://localhost:5097/api/upload/photo?userId=${userId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     alert("Image uploaded!");
@@ -41,9 +47,14 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
     fetchProfile();
-  }, []);
+  }, [userId, navigate]);
 
+  if (!userId) return <p>Please log in.</p>;
   if (!user) return <p>Loading...</p>;
 
   return (

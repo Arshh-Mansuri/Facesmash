@@ -2,6 +2,7 @@ using FacesmashAPI.Data;
 using FacesmashAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FacesmashAPI.Controllers
 {
@@ -16,11 +17,31 @@ namespace FacesmashAPI.Controllers
             _db = db;
         }
 
-        // ✅ GET api/profile/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProfile(int id)
+        // GET api/profile/{id}
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetPublicProfile([FromRoute] int id)
         {
             var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound("User not found");
+
+            return Ok(new
+            {
+                user.Id,
+                user.Name,
+                user.PhotoUrl,
+                user.Bio
+            });
+        }
+
+        // ✅ GET api/profile/me
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            // Without JWT, fallback: require userId query for now (temporary approach)
+            if (!int.TryParse(HttpContext.Request.Query["userId"], out int userId))
+                return BadRequest("userId is required");
+
+            var user = await _db.Users.FindAsync(userId);
             if (user == null) return NotFound("User not found");
 
             return Ok(new
@@ -34,18 +55,29 @@ namespace FacesmashAPI.Controllers
             });
         }
 
-        // ✅ PUT api/profile/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProfile(int id, [FromBody] UpdateProfileRequest request)
+        // ✅ PUT api/profile/me
+        [HttpPut("me")]
+        public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateProfileRequest request)
         {
-            var user = await _db.Users.FindAsync(id);
+            if (!int.TryParse(HttpContext.Request.Query["userId"], out int userId))
+                return BadRequest("userId is required");
+
+            var user = await _db.Users.FindAsync(userId);
             if (user == null) return NotFound("User not found");
 
             user.Name = request.Name ?? user.Name;
             user.Bio = request.Bio ?? user.Bio;
 
             await _db.SaveChangesAsync();
-            return Ok(user);
+            return Ok(new
+            {
+                user.Id,
+                user.Name,
+                user.Email,
+                user.PhotoUrl,
+                user.Bio,
+                user.Rating
+            });
         }
     }
 

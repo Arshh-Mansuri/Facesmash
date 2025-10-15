@@ -46,7 +46,7 @@ namespace FacesmashAPI.Controllers
         {
             // Fetch all male users into memory, then pick 2 randomly
             var males = (await _db.Users
-                .Where(u => u.Gender == "M")
+                .Where(u => u.Gender == "M" && u.PhotoUrl != null && u.PhotoUrl != "")
                 .ToListAsync())
                 .OrderBy(u => Guid.NewGuid())
                 .Take(2)

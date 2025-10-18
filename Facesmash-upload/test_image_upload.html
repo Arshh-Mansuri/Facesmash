@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        .image-preview { max-width: 200px; max-height: 200px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Image Format Support Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Image Upload</h2>
+        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp" />
+        <div id="result"></div>
+        <div id="preview"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Supported Formats</h2>
+        <ul>
+            <li>JPG / JPEG</li>
+            <li>PNG</li>
+            <li>GIF</li>
+            <li>WebP</li>
+            <li>BMP</li>
+        </ul>
+    </div>
+
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const result = document.getElementById('result');
+            const preview = document.getElementById('preview');
+            
+            if (!file) {
+                result.innerHTML = '';
+                preview.innerHTML = '';
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+            const isValidType = allowedTypes.includes(file.type);
+            
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const isValidSize = file.size <= maxSize;
+            
+            let resultHTML = `<strong>File: ${file.name}</strong><br>`;
+            resultHTML += `Type: ${file.type}<br>`;
+            resultHTML += `Size: ${(file.size / 1024 / 1024).toFixed(2)} MB<br>`;
+            resultHTML += `Valid Type: <span class="${isValidType ? 'success' : 'error'}">${isValidType ? '✓' : '✗'}</span><br>`;
+            resultHTML += `Valid Size: <span class="${isValidSize ? 'success' : 'error'}">${isValidSize ? '✓' : '✗'}</span><br>`;
+            
+            if (isValidType && isValidSize) {
+                resultHTML += '<span class="success">✓ File is valid for upload!</span>';
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="image-preview" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                resultHTML += '<span class="error">✗ File is not valid for upload!</span>';
+                preview.innerHTML = '';
+            }
+            
+            result.innerHTML = resultHTML;
+        });
+    </script>
+</body>
+</html>

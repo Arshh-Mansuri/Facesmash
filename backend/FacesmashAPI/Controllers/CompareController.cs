@@ -17,10 +17,25 @@ namespace FacesmashAPI.Controllers
             _db = db;
         }
 
-        // POST api/compare/vote
+        // Helper method to get current user ID from session
+        private int? GetCurrentUserId()
+        {
+            return HttpContext.Session.GetInt32("UserId");
+        }
+
+        // Helper method to check if user is authenticated
+        private bool IsAuthenticated()
+        {
+            return GetCurrentUserId() != null;
+        }
+
+        // POST api/compare/vote - Requires authentication
         [HttpPost("vote")]
         public async Task<IActionResult> Vote([FromBody] VoteRequest request)
         {
+            if (!IsAuthenticated())
+                return Unauthorized(new { message = "Must be logged in to vote" });
+
             var winner = await _db.Users.FindAsync(request.WinnerId);
             var loser = await _db.Users.FindAsync(request.LoserId);
 
@@ -40,28 +55,51 @@ namespace FacesmashAPI.Controllers
             return Ok(new { WinnerRating = winner.Rating, LoserRating = loser.Rating });
         }
 
-        // GET api/compare/males
-        [HttpGet("males")]
-        public async Task<IActionResult> GetRandomMales()
+        // GET api/compare/debug - Debug endpoint to check users
+        [HttpGet("debug")]
+        public async Task<IActionResult> DebugUsers()
         {
-            // Fetch all male users into memory, then pick 2 randomly
-            var males = (await _db.Users
-                .Where(u => u.Gender == "M" && u.PhotoUrl != null && u.PhotoUrl != "")
+            var users = await _db.Users.ToListAsync();
+            return Ok(new
+            {
+                TotalUsers = users.Count,
+                Users = users.Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Gender,
+                    u.PhotoUrl,
+                    u.Rating
+                })
+            });
+        }
+
+        // GET api/compare/random
+        [HttpGet("random")]
+        public async Task<IActionResult> GetRandomUsers()
+        {
+            // Debug: Check total user count
+            var totalUsers = await _db.Users.CountAsync();
+            
+            // Fetch all users into memory, then pick 2 randomly
+            var users = (await _db.Users
                 .ToListAsync())
                 .OrderBy(u => Guid.NewGuid())
                 .Take(2)
                 .ToList();
 
-            if (males.Count < 2)
-                return BadRequest("Not enough male users");
+            if (users.Count < 2)
+                return BadRequest($"Not enough users. Total users in database: {totalUsers}");
 
-            return Ok(males.Select(u => new
+            return Ok(users.Select(u => new
             {
                 u.Id,
                 u.Name,
                 u.PhotoUrl,
                 u.Rating,
-                u.Bio // Include the bio field
+                u.Bio,
+                u.Gender // Include gender for display if needed
             }));
         }
     }

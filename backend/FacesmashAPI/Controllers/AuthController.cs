@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using FacesmashAPI.Data;
 using FacesmashAPI.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using BCrypt.Net;
 
 namespace FacesmashAPI.Controllers
 {
@@ -15,39 +11,39 @@ namespace FacesmashAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IConfiguration _config;
 
-        public AuthController(AppDbContext context, IConfiguration config)
+        public AuthController(AppDbContext context)
         {
             _context = context;
-            _config = config;
         }
-
-        
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            if (user == null || user.PasswordHash != request.Password)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 return Unauthorized(new { message = "Invalid email or password" });
 
-            var token = GenerateJwtToken(user);
+            // Set session data
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("UserEmail", user.Email);
+            HttpContext.Session.SetString("UserName", user.Name);
 
             return Ok(new
             {
                 userId = user.Id,
                 name = user.Name,
                 email = user.Email,
-                token = token
+                message = "Login successful"
             });
         }
 
         [HttpPost("signup")]
         public async Task<IActionResult> Signup([FromBody] SignupRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password) || string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Gender))
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password) || 
+                string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Gender))
             {
                 return BadRequest(new { message = "Name, email, password, and gender are required" });
             }
@@ -62,9 +58,9 @@ namespace FacesmashAPI.Controllers
             {
                 Name = request.Name,
                 Email = request.Email,
-                PasswordHash = request.Password, // TODO: replace with hashing for production
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Gender = request.Gender,
-                PhotoUrl = null,
+                PhotoUrl = "https://via.placeholder.com/300x300/cccccc/666666?text=No+Photo",
                 Bio = null,
                 Rating = 1200
             };
@@ -72,50 +68,47 @@ namespace FacesmashAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var token = GenerateJwtToken(user);
+            // Set session data
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("UserEmail", user.Email);
+            HttpContext.Session.SetString("UserName", user.Name);
 
             return Ok(new
             {
                 userId = user.Id,
                 name = user.Name,
                 email = user.Email,
-                token = token
+                message = "Account created successfully"
             });
         }
 
-        private string GenerateJwtToken(User user)
+        [HttpPost("logout")]
+        public IActionResult Logout()
         {
-            var jwtKey = _config["Jwt:Key"] ?? throw new Exception("JWT Key not configured");
-            var jwtIssuer = _config["Jwt:Issuer"];
-            var jwtAudience = _config["Jwt:Audience"];
-            var expireMinutesString = _config["Jwt:ExpireMinutes"];
-            var expireMinutes = 60;
-            if (!string.IsNullOrWhiteSpace(expireMinutesString) && int.TryParse(expireMinutesString, out var parsed))
+            HttpContext.Session.Clear();
+            return Ok(new { message = "Logged out successfully" });
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return Unauthorized(new { message = "Not logged in" });
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(new
             {
-                expireMinutes = parsed;
-            }
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim("userId", user.Id.ToString()),
-                new Claim("name", user.Name),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: jwtIssuer,
-                audience: jwtAudience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expireMinutes),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                userId = user.Id,
+                name = user.Name,
+                email = user.Email,
+                photoUrl = user.PhotoUrl,
+                bio = user.Bio,
+                rating = user.Rating
+            });
         }
     }
 

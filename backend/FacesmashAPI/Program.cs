@@ -1,9 +1,7 @@
-using System.Text;
 using FacesmashAPI.Data;
 using FacesmashAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using BCrypt.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +24,19 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new string[] { })
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials(); // Required for sessions
     });
 });
 
-// JWT authentication removed; users must login per request
+// Session services
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -48,7 +54,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-// Authentication removed
+app.UseSession(); // Add session middleware
 app.UseAuthorization();
 
 app.MapControllers();
@@ -62,9 +68,15 @@ using (var scope = app.Services.CreateScope())
     if (!db.Users.Any())
     {
         db.Users.AddRange(
-            new User { Name = "Alice", Email = "alice@example.com", PasswordHash = "123", Gender = "F", PhotoUrl = "alice.jpg", Rating = 1200 },
-            new User { Name = "Bob", Email = "bob@example.com", PasswordHash = "123", Gender = "M", PhotoUrl = "bob.jpg", Rating = 1200 },
-            new User { Name = "Charlie", Email = "charlie@example.com", PasswordHash = "123", Gender = "M", PhotoUrl = "charlie.jpg", Rating = 1200 }
+            // Female users
+            new User { Name = "Alice", Email = "alice@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "F", PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Alice", Rating = 1200 },
+            new User { Name = "Emma", Email = "emma@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "F", PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Emma", Rating = 1150 },
+            new User { Name = "Sophia", Email = "sophia@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "F", PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Sophia", Rating = 1300 },
+            
+            // Male users
+            new User { Name = "Bob", Email = "bob@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "M", PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=Bob", Rating = 1200 },
+            new User { Name = "Charlie", Email = "charlie@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "M", PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=Charlie", Rating = 1250 },
+            new User { Name = "David", Email = "david@example.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), Gender = "M", PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=David", Rating = 1180 }
         );
         db.SaveChanges();
     }

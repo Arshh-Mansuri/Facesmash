@@ -15,7 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
-// File upload deferred; blob storage service not registered
+// Azure Blob Storage service
+builder.Services.AddScoped<FacesmashAPI.Services.AzureBlobStorageService>();
 
 // CORS
 builder.Services.AddCors(options =>

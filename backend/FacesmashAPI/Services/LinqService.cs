@@ -221,8 +221,9 @@ namespace FacesmashAPI.Services
                 };
 
                 // Using LINQ Aggregate with lambda expressions for custom calculations
+                var averageRating = (double)aggregates["AverageRating"];
                 var ratingVariance = users.Aggregate(0.0, (sum, user) => 
-                    sum + Math.Pow(user.Rating - aggregates["AverageRating"], 2)) / users.Count;
+                    sum + Math.Pow(user.Rating - averageRating, 2)) / users.Count;
 
                 aggregates["RatingVariance"] = ratingVariance;
                 aggregates["RatingStandardDeviation"] = Math.Sqrt(ratingVariance);

@@ -1,5 +1,6 @@
 using FacesmashAPI.Data;
 using FacesmashAPI.Models;
+using FacesmashAPI.Middleware;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
 
@@ -39,6 +40,15 @@ builder.Services.AddScoped<FacesmashAPI.Interfaces.IAuthenticatable, FacesmashAP
 builder.Services.AddScoped<FacesmashAPI.Interfaces.IProfileManager<FacesmashAPI.Models.User>, FacesmashAPI.Services.ProfileService<FacesmashAPI.Models.User>>();
 builder.Services.AddScoped<FacesmashAPI.Services.LinqService>();
 builder.Services.AddScoped<FacesmashAPI.Repositories.GenericRepository<FacesmashAPI.Models.User>>();
+
+// Enhanced services for comprehensive error handling, validation, and performance
+builder.Services.AddScoped<FacesmashAPI.Services.InputValidationService>();
+builder.Services.AddScoped<FacesmashAPI.Services.DataStructuresAlgorithmsService>();
+builder.Services.AddScoped<FacesmashAPI.Services.CachingService>();
+
+// Caching services
+builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache(); // For development - in production, use Redis or SQL Server
 
 // CORS configuration for React frontend
 builder.Services.AddCors(options =>
@@ -96,6 +106,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Global exception handling middleware (must be early in pipeline)
+app.UseGlobalExceptionHandling();
+
 // Security and CORS middleware
 app.UseCors("AllowReactApp");
 app.UseHttpsRedirection();
@@ -139,7 +152,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "alice@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "F", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Alice", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/women/1.jpg", 
                     Rating = 1200,
                     Bio = "Love traveling and photography! 📸",
                     CreatedAt = DateTime.UtcNow.AddDays(-30)
@@ -150,7 +163,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "emma@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "F", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Emma", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/women/2.jpg", 
                     Rating = 1150,
                     Bio = "Fitness enthusiast and coffee lover ☕",
                     CreatedAt = DateTime.UtcNow.AddDays(-25)
@@ -161,7 +174,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "sophia@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "F", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/ff69b4/ffffff?text=Sophia", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/women/3.jpg", 
                     Rating = 1300,
                     Bio = "Artist and nature lover 🌿",
                     CreatedAt = DateTime.UtcNow.AddDays(-20)
@@ -174,7 +187,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "bob@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "M", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=Bob", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/men/1.jpg", 
                     Rating = 1200,
                     Bio = "Tech enthusiast and gamer 🎮",
                     CreatedAt = DateTime.UtcNow.AddDays(-28)
@@ -185,7 +198,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "charlie@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "M", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=Charlie", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/men/2.jpg", 
                     Rating = 1250,
                     Bio = "Musician and foodie 🎵",
                     CreatedAt = DateTime.UtcNow.AddDays(-22)
@@ -196,7 +209,7 @@ using (var serviceScope = app.Services.CreateScope())
                     Email = "david@example.com", 
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("123"), 
                     Gender = "M", 
-                    PhotoUrl = "https://via.placeholder.com/300x300/4169e1/ffffff?text=David", 
+                    PhotoUrl = "https://randomuser.me/api/portraits/men/3.jpg", 
                     Rating = 1180,
                     Bio = "Sports fan and outdoor adventurer ⚽",
                     CreatedAt = DateTime.UtcNow.AddDays(-18)

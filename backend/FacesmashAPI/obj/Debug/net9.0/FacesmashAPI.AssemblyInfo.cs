@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8c62645e3be4d99512c93b36769d64cd9d191dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ddd61ddc63721d31a453682d9903508427c5077")]
 [assembly: System.Reflection.AssemblyProductAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

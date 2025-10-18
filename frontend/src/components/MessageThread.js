@@ -13,7 +13,7 @@ const MessageThread = ({ peerUser, onClose }) => {
       const res = await axios.get(
         `http://localhost:5097/api/Messages/thread?userId=${currentUserId}&peerId=${peerUser.id}`
       );
-      setMessages(res.data);
+      setMessages(res.data.messages || []);
       setLoading(false);
     } catch (err) {
       console.error("Failed to fetch messages:", err);

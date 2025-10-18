@@ -25,6 +25,7 @@ namespace FacesmashAPI.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("FromUserId")
@@ -38,6 +39,10 @@ namespace FacesmashAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("ToUserId");
+
                     b.ToTable("Messages");
                 });
 
@@ -48,18 +53,25 @@ namespace FacesmashAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .HasMaxLength(1)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -67,6 +79,7 @@ namespace FacesmashAPI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoUrl")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Rating")
@@ -74,39 +87,25 @@ namespace FacesmashAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "alice.smith@student.uts.edu.au",
-                            Gender = "F",
-                            Name = "Alice",
-                            PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/women/65.jpg",
-                            Rating = 1200
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "bob.jones@student.uts.edu.au",
-                            Gender = "M",
-                            Name = "Bob",
-                            PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/men/52.jpg",
-                            Rating = 1200
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Email = "charlie.brown@student.uts.edu.au",
-                            Gender = "M",
-                            Name = "Charlie",
-                            PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/women/68.jpg",
-                            Rating = 1200
-                        });
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("FacesmashAPI.Models.Message", b =>
+                {
+                    b.HasOne("FacesmashAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FromUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FacesmashAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("ToUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

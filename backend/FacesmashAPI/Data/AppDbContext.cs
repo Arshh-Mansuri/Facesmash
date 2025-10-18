@@ -13,13 +13,38 @@ namespace FacesmashAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<User>().HasData(
-    new User { Id = 1, Name = "Alice", Email = "alice.smith@student.uts.edu.au", PasswordHash = "123", Gender = "F", PhotoUrl = "https://randomuser.me/api/portraits/women/65.jpg", Rating = 1200 },
-    new User { Id = 2, Name = "Bob", Email = "bob.jones@student.uts.edu.au", PasswordHash = "123", Gender = "M", PhotoUrl = "https://randomuser.me/api/portraits/men/52.jpg", Rating = 1200 },
-    new User { Id = 3, Name = "Charlie", Email = "charlie.brown@student.uts.edu.au", PasswordHash = "123", Gender = "M", PhotoUrl = "https://randomuser.me/api/portraits/women/68.jpg", Rating = 1200 }
-);
+            
+            // Configure User entity
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.PasswordHash).IsRequired();
+                entity.Property(e => e.Gender).IsRequired().HasMaxLength(1);
+                entity.Property(e => e.PhotoUrl).HasMaxLength(500);
+                entity.Property(e => e.Bio).HasMaxLength(500);
+                entity.HasIndex(e => e.Email).IsUnique();
+            });
 
-           
+            // Configure Message entity
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Content).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.SentAt).IsRequired();
+                
+                // Configure foreign key relationships
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(e => e.FromUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                    
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(e => e.ToUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

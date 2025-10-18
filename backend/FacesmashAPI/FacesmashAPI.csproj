@@ -26,4 +26,11 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Tests_backup/**" />
+    <Content Remove="Tests_backup/**" />
+    <EmbeddedResource Remove="Tests_backup/**" />
+    <None Remove="Tests_backup/**" />
+  </ItemGroup>
+
 </Project>

@@ -2,6 +2,7 @@ using FacesmashAPI.Data;
 using FacesmashAPI.Interfaces;
 using FacesmashAPI.Models;
 using FacesmashAPI.Services;
+using FacesmashAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -278,7 +279,7 @@ namespace FacesmashAPI.Controllers
                         new { TestName = "InvalidEmail", Email = "invalid@example.com", Password = "password123", ExpectedResult = "Failure" },
                         new { TestName = "InvalidPassword", Email = "test@example.com", Password = "wrongpassword", ExpectedResult = "Failure" }
                     },
-                    PolymorphismTests = new[]
+                    PolymorphismTests = new object[]
                     {
                         new { TestName = "UserGetUserType", ExpectedResult = "Standard User" },
                         new { TestName = "VipUserGetUserType", ExpectedResult = "VIP User (Gold)" },

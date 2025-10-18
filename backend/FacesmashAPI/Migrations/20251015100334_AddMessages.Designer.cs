@@ -3,6 +3,7 @@ using System;
 using FacesmashAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FacesmashAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251015100334_AddMessages")]
+    partial class AddMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -84,7 +87,7 @@ namespace FacesmashAPI.Migrations
                             Gender = "F",
                             Name = "Alice",
                             PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/women/65.jpg",
+                            PhotoUrl = "alice.jpg",
                             Rating = 1200
                         },
                         new
@@ -94,7 +97,7 @@ namespace FacesmashAPI.Migrations
                             Gender = "M",
                             Name = "Bob",
                             PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/men/52.jpg",
+                            PhotoUrl = "bob.jpg",
                             Rating = 1200
                         },
                         new
@@ -104,7 +107,7 @@ namespace FacesmashAPI.Migrations
                             Gender = "M",
                             Name = "Charlie",
                             PasswordHash = "123",
-                            PhotoUrl = "https://randomuser.me/api/portraits/women/68.jpg",
+                            PhotoUrl = "charlie.jpg",
                             Rating = 1200
                         });
                 });

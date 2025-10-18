@@ -1,60 +1,105 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
+
     try {
       const res = await axios.post("http://localhost:5097/api/auth/login", {
         email,
         password,
+      }, {
+        withCredentials: true // Important for session cookies
       });
+      
       setMessage(`Welcome ${res.data.name}!`);
+      
+      // Save minimal session info for immediate access
+      localStorage.setItem("userId", String(res.data.userId));
+      localStorage.setItem("name", res.data.name || "");
+      localStorage.setItem("email", res.data.email || "");
 
-      // ✅ Redirect to dashboard
-      navigate("/dashboard");
+      // Dispatch custom event to update navbar
+      window.dispatchEvent(new CustomEvent('authStateChanged'));
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+      
     } catch (err) {
-      setMessage("Invalid email or password");
+      if (err.response?.status === 401) {
+        setMessage("Invalid email or password");
+      } else {
+        setMessage("Login failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title text-center mb-4">Login</h2>
+              <form onSubmit={handleLogin}>
+                <div className="mb-3">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+                <div className="mb-3">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
 
-        <button type="submit" className="btn btn-primary">
-          Login
-        </button>
-      </form>
-      {message && <p className="mt-3">{message}</p>}
+                <button 
+                  type="submit" 
+                  className="btn btn-primary w-100"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Logging in..." : "Login"}
+                </button>
+              </form>
+
+              {message && (
+                <div className={`alert mt-3 ${message.includes("Welcome") ? "alert-success" : "alert-danger"}`}>
+                  {message}
+                </div>
+              )}
+
+              <div className="text-center mt-3">
+                <p>Don't have an account? <Link to="/signup">Create one here</Link></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

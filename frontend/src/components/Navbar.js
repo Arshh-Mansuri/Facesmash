@@ -69,69 +69,97 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/dashboard">
-          Facesmash
+        <Link className="navbar-brand fw-bold" to="/dashboard">
+          <span className="d-none d-sm-inline">Facesmash</span>
+          <span className="d-sm-none">FS</span>
         </Link>
         
-        {isLoggedIn ? (
-          <div className="collapse navbar-collapse">
-            <ul className="navbar-nav me-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard">
-                  Dashboard
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/compare">
-                  Compare
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/profile">
-                  Profile
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/messages">
-                  Messages
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/leaderboard">
-                  Leaderboard
-                </Link>
-              </li>
-            </ul>
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        
+        <div className="collapse navbar-collapse" id="navbarNav">
+          {isLoggedIn ? (
+            <>
+              <ul className="navbar-nav me-auto">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/dashboard">
+                    <i className="fas fa-home d-none d-md-inline me-1"></i>
+                    Dashboard
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/compare">
+                    <i className="fas fa-balance-scale d-none d-md-inline me-1"></i>
+                    Compare
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">
+                    <i className="fas fa-user d-none d-md-inline me-1"></i>
+                    Profile
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/messages">
+                    <i className="fas fa-envelope d-none d-md-inline me-1"></i>
+                    Messages
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/leaderboard">
+                    <i className="fas fa-trophy d-none d-md-inline me-1"></i>
+                    Leaderboard
+                  </Link>
+                </li>
+              </ul>
+              <ul className="navbar-nav ms-auto">
+                <li className="nav-item d-none d-md-block">
+                  <span className="navbar-text me-3">
+                    Welcome, {userName}!
+                  </span>
+                </li>
+                <li className="nav-item d-md-none">
+                  <span className="navbar-text me-3 small">
+                    {userName}
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <button 
+                    className="btn btn-outline-light btn-sm responsive-btn" 
+                    onClick={handleLogout}
+                  >
+                    <i className="fas fa-sign-out-alt d-none d-md-inline me-1"></i>
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </>
+          ) : (
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <span className="navbar-text me-3">
-                  Welcome, {userName}!
-                </span>
+                <Link className="nav-link" to="/login">
+                  <i className="fas fa-sign-in-alt d-none d-md-inline me-1"></i>
+                  Login
+                </Link>
               </li>
               <li className="nav-item">
-                <button 
-                  className="btn btn-outline-light btn-sm" 
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
+                <Link className="nav-link" to="/signup">
+                  <i className="fas fa-user-plus d-none d-md-inline me-1"></i>
+                  Sign Up
+                </Link>
               </li>
             </ul>
-          </div>
-        ) : (
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/signup">
-                Sign Up
-              </Link>
-            </li>
-          </ul>
-        )}
+          )}
+        </div>
       </div>
     </nav>
   );

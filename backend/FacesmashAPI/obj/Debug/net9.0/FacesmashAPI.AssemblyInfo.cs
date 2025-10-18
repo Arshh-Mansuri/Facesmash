@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("897e666d-e4ee-40a3-a1b2-2224c199371d")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc360e42cb5ec9c729af3c62b793673f3332ac28")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8c62645e3be4d99512c93b36769d64cd9d191dd")]
 [assembly: System.Reflection.AssemblyProductAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FacesmashAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

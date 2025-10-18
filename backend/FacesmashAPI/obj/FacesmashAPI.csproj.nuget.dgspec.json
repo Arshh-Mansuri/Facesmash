@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj": {}
+    "/Users/arshmansuri/Desktop/Dotnet_assigment2/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj": {}
   },
   "projects": {
-    "/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj": {
+    "/Users/arshmansuri/Desktop/Dotnet_assigment2/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj",
+        "projectUniqueName": "/Users/arshmansuri/Desktop/Dotnet_assigment2/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj",
         "projectName": "FacesmashAPI",
-        "projectPath": "/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj",
+        "projectPath": "/Users/arshmansuri/Desktop/Dotnet_assigment2/Facesmash/backend/FacesmashAPI/FacesmashAPI.csproj",
         "packagesPath": "/Users/arshmansuri/.nuget/packages/",
-        "outputPath": "/Users/arshmansuri/Desktop/Facesmash/backend/FacesmashAPI/obj/",
+        "outputPath": "/Users/arshmansuri/Desktop/Dotnet_assigment2/Facesmash/backend/FacesmashAPI/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/arshmansuri/.nuget/NuGet/NuGet.Config"
@@ -44,6 +44,18 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Azure.Identity": {
+              "target": "Package",
+              "version": "[1.17.0, )"
+            },
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.26.0, )"
+            },
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[9.0.10, )"

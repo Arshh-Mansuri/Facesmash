@@ -17,7 +17,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const res = await axios.get("http://localhost:5097/api/profile/me", {
-        withCredentials: true // Important for session cookies
+        withCredentials: true, // Important for session cookies
       });
       setUser(res.data);
       setBio(res.data.bio || "");
@@ -40,16 +40,20 @@ const Profile = () => {
   const handleSave = async () => {
     setIsLoading(true);
     setMessage("");
-    
+
     try {
-      await axios.put("http://localhost:5097/api/profile/me", {
-        name: name,
-        bio: bio,
-        photoUrl: photoUrl
-      }, {
-        withCredentials: true // Important for session cookies
-      });
-      
+      await axios.put(
+        "http://localhost:5097/api/profile/me",
+        {
+          name: name,
+          bio: bio,
+          photoUrl: photoUrl,
+        },
+        {
+          withCredentials: true, // Important for session cookies
+        }
+      );
+
       setMessage("Profile updated successfully!");
       fetchProfile(); // Refresh profile data
     } catch (err) {
@@ -79,13 +83,17 @@ const Profile = () => {
 
     const formData = new FormData();
     formData.append("file", file);
-    
+
     try {
-      await axios.post("http://localhost:5097/api/upload/photo", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true
-      });
-      
+      await axios.post(
+        "http://localhost:5097/api/profile/upload-photo",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
       setMessage("Image uploaded successfully!");
       fetchProfile(); // Refresh profile data
     } catch (err) {
@@ -104,9 +112,13 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5097/api/auth/logout", {}, {
-        withCredentials: true
-      });
+      await axios.post(
+        "http://localhost:5097/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
@@ -131,7 +143,7 @@ const Profile = () => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title">{user.name}</h2>
-              
+
               <div className="position-relative d-inline-block mb-3">
                 <img
                   src={user.photoUrl || "https://via.placeholder.com/150"}
@@ -139,19 +151,30 @@ const Profile = () => {
                   className="rounded-circle"
                   width="150"
                   height="150"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
                 />
                 {user.photoUrl && user.photoUrl.includes("placeholder") && (
                   <div className="position-absolute top-0 start-50 translate-middle-x">
-                    <span className="badge bg-warning text-dark">Upload Photo</span>
+                    <span className="badge bg-warning text-dark">
+                      Upload Photo
+                    </span>
                   </div>
                 )}
               </div>
-              
+
               <p className="text-muted">{user.email}</p>
               <p className="badge bg-primary">Rating: {user.rating}</p>
 
               {message && (
-                <div className={`alert ${message.includes("successfully") ? "alert-success" : "alert-danger"}`}>
+                <div
+                  className={`alert ${
+                    message.includes("successfully")
+                      ? "alert-success"
+                      : "alert-danger"
+                  }`}
+                >
                   {message}
                 </div>
               )}
@@ -179,9 +202,7 @@ const Profile = () => {
                   placeholder="Tell us about yourself..."
                   maxLength="500"
                 />
-                <div className="form-text">
-                  {bio.length}/500 characters
-                </div>
+                <div className="form-text">{bio.length}/500 characters</div>
               </div>
 
               <div className="mb-3">
@@ -196,15 +217,15 @@ const Profile = () => {
               </div>
 
               <div className="d-flex gap-2 justify-content-center">
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   onClick={handleSave}
                   disabled={isLoading}
                 >
                   {isLoading ? "Saving..." : "Save Changes"}
                 </button>
-                <button 
-                  className="btn btn-outline-danger" 
+                <button
+                  className="btn btn-outline-danger"
                   onClick={handleLogout}
                   disabled={isLoading}
                 >
@@ -222,8 +243,8 @@ const Profile = () => {
                   onChange={(e) => setFile(e.target.files[0])}
                   accept="image/*"
                 />
-                <button 
-                  className="btn btn-success" 
+                <button
+                  className="btn btn-success"
                   type="submit"
                   disabled={isLoading}
                 >

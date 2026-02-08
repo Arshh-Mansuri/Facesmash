@@ -150,6 +150,4 @@ As2copy/
 - Implement user rating and matching system
   
 ## Video
-https://github.com/user-attachments/assets/e8e0228b-4ac9-48e8-bcc9-3bef50249ce0
-
-https://github.com/Arshh-Mansuri/Facesmash/issues/3#issue-3911629163
+https://github.com/user-attachments/assets/235faeb4-3566-450b-8e5b-63a5ecf5aeb3

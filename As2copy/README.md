@@ -152,3 +152,4 @@ As2copy/
 ## Video
 https://github.com/user-attachments/assets/e8e0228b-4ac9-48e8-bcc9-3bef50249ce0
 
+https://github.com/Arshh-Mansuri/Facesmash/issues/3#issue-3911629163
